@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maplewood Family Clinic — AI Front-Desk Clinical Workstation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Top Navigation Bar -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="clinic-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+            <path d="M12 5v14"/>
+            <path d="M5 12h14"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">Maplewood Family Clinic</div>
+          <div class="brand-sub">AI Front-Desk Triage & Operations Workstation</div>
+        </div>
+      </div>
+
+      <div class="header-stats">
+        <div class="kpi-pill">
+          <span class="kpi-dot live"></span>
+          <span class="kpi-label">Agent Mode:</span>
+          <span class="kpi-val" id="kpiMode">Deterministic Baseline</span>
+        </div>
+        <div class="kpi-pill">
+          <span class="kpi-icon">📅</span>
+          <span class="kpi-label">Clinic Date:</span>
+          <span class="kpi-val" id="kpiToday">2026-11-09</span>
+        </div>
+        <div class="kpi-pill">
+          <span class="kpi-icon">⚡</span>
+          <span class="kpi-label">Emergency Recall:</span>
+          <span class="kpi-val success">100.0% (0 Missed)</span>
+        </div>
+      </div>
+
+      <div class="header-links">
+        <a href="/api/evaluation" target="_blank" class="nav-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Evaluation Report
+        </a>
+        <a href="/health" target="_blank" class="nav-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          Health API
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Responsive Grid -->
+    <main class="main-content">
+      <!-- Left Column: Scenario & Input Console -->
+      <section class="panel console-panel">
+        <div class="panel-header">
+          <div class="panel-title-wrap">
+            <span class="panel-icon">✉️</span>
+            <div>
+              <h2>Patient Message Ingestion</h2>
+              <span class="panel-subtitle">Select a benchmark scenario or type an arbitrary message</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Categories for Presets -->
+        <div class="category-tabs">
+          <button class="cat-pill active" onclick="filterCategory('all', this)">All (14)</button>
+          <button class="cat-pill" onclick="filterCategory('emergency', this)">🚨 Emergency</button>
+          <button class="cat-pill" onclick="filterCategory('refill', this)">💊 Refills</button>
+          <button class="cat-pill" onclick="filterCategory('booking', this)">📅 Scheduling</button>
+          <button class="cat-pill" onclick="filterCategory('security', this)">🛡️ Privacy & Guardrails</button>
+        </div>
+
+        <div class="form-section">
+          <div class="form-group">
+            <label for="scenarioSelect">Benchmark Scenarios:</label>
+            <div class="select-wrapper">
+              <select id="scenarioSelect" onchange="handleScenarioSelect()">
+                <option value="">-- Choose a benchmark scenario --</option>
+                <!-- Group: Emergencies -->
+                <optgroup label="🚨 Life-Threatening & Urgent Emergencies">
+                  <option value="M003" data-cat="emergency">M003: Crushing Chest Pain & Arm Radiation (Aisha Johnson)</option>
+                  <option value="M014" data-cat="emergency">M014: Elderly Head Injury with Confusion (Margaret Ellis)</option>
+                  <option value="M017" data-cat="emergency">M017: Warfarin Anticoagulant Hemorrhage (Samuel Foster)</option>
+                  <option value="M032" data-cat="emergency">M032: Severe Acute Asthma Distress (Daniel Kim)</option>
+                  <option value="M035" data-cat="emergency">M035: Severe Hypoglycemia BS 45 on Insulin (Ahmed Siddiqui)</option>
+                  <option value="M006" data-cat="emergency">M006: Dual Intent — Mood Crisis in Refill (Emily Novak)</option>
+                </optgroup>
+                <!-- Group: Refill Policies -->
+                <optgroup label="💊 Medication Refill Policy Tests">
+                  <option value="M001" data-cat="refill">M001: Routine Refill within 7-Day Window (Robert Chen — Lisinopril)</option>
+                  <option value="M004" data-cat="refill">M004: Blocked — Last Seen >12 Months Ago (Thomas Wright)</option>
+                  <option value="M005" data-cat="refill">M005: Blocked — Controlled Substance C-IV (Marcus Bell — Xanax)</option>
+                  <option value="M013" data-cat="refill">M013: Blocked — Refill >7 Days Too Early (Fatima Hassan — Omeprazole)</option>
+                </optgroup>
+                <!-- Group: Scheduling -->
+                <optgroup label="📅 Appointments & Conflict Detection">
+                  <option value="M016" data-cat="booking">M016: Spanish Annual Physical Booking (Carlos Mendez)</option>
+                  <option value="M024" data-cat="booking">M024: Idiom Test — 'Dying to get in lol' (Lucy Nguyen)</option>
+                  <option value="M028" data-cat="booking">M028: Blocked — Provider on Leave Nov 16–20 (Nora Fitzgerald)</option>
+                  <option value="M029" data-cat="booking">M029: Blocked — Double-Booking Slot Conflict (Robert Chen)</option>
+                </optgroup>
+                <!-- Group: Privacy & Security -->
+                <optgroup label="🛡️ Privacy, Caregiver & Security Guardrails">
+                  <option value="M018" data-cat="security">M018: Prompt Injection Instruction Override (Ahmed Siddiqui)</option>
+                  <option value="M027" data-cat="security">M027: Blocked — Unauthorized Third-Party Inquirer (Mike)</option>
+                  <option value="M038" data-cat="security">M038: Non-Patient Marketing Spam (BillingPro Solutions)</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+
+          <form id="agentForm" onsubmit="processMessageForm(event)">
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="fromName">Sender Name:</label>
+                <input type="text" id="fromName" placeholder="e.g. Aisha Johnson or Robert Chen">
+              </div>
+
+              <div class="form-group">
+                <label for="fromContact">Contact (Phone/Email):</label>
+                <input type="text" id="fromContact" placeholder="e.g. 555-0103 or email@example.com">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Communication Channel:</label>
+              <div class="channel-pills">
+                <label class="channel-pill">
+                  <input type="radio" name="channel" value="sms" checked>
+                  <span>💬 SMS</span>
+                </label>
+                <label class="channel-pill">
+                  <input type="radio" name="channel" value="portal">
+                  <span>🌐 Portal</span>
+                </label>
+                <label class="channel-pill">
+                  <input type="radio" name="channel" value="email">
+                  <span>✉️ Email</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="label-row">
+                <label for="messageBody">Message Content:</label>
+                <span class="char-count" id="charCount">0 chars</span>
+              </div>
+              <textarea id="messageBody" rows="4" required placeholder="Type an arbitrary incoming patient inquiry (e.g. 'I am having a heart attack' or 'Can I schedule a physical?') or pick a preset scenario above..."></textarea>
+            </div>
+
+            <div class="btn-row">
+              <button type="submit" class="btn btn-primary" id="submitBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span>Execute Agent Pipeline</span>
+              </button>
+              <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                <span>Reset</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Right Column: Live Triage & Execution Telemetry Workstation -->
+      <section class="panel telemetry-panel">
+        <div class="panel-header">
+          <div class="panel-title-wrap">
+            <span class="panel-icon">📊</span>
+            <h2>Agent Telemetry & Triage Output</h2>
+          </div>
+          <span class="execution-badge" id="execBadge">Ready for Ingestion</span>
+        </div>
+
+        <!-- Initial Placeholder State -->
+        <div id="emptyTelemetry" class="empty-telemetry">
+          <div class="empty-icon-wrap">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <h3>Clinical Workstation Standing By</h3>
+          <p>Select any clinical scenario on the left or type a custom message, then execute to view the complete triage assessment, verification status, policy decision trace, and generated patient communication.</p>
+        </div>
+
+        <!-- Populated Telemetry View -->
+        <div id="activeTelemetry" class="active-telemetry" style="display: none;">
+          <!-- Top Triage Banner -->
+          <div class="triage-banner" id="triageBanner">
+            <div class="banner-left">
+              <span class="triage-sub">Triage Urgency Level</span>
+              <div class="triage-title" id="urgencyTitle">ROUTINE</div>
+            </div>
+            <div class="banner-right">
+              <span class="urgency-indicator-dot" id="urgencyDot"></span>
+              <span class="triage-status-text" id="triageStatusText">Standard Front-Desk Workflow</span>
+            </div>
+          </div>
+
+          <!-- Patient Identity Context Card -->
+          <div class="patient-card">
+            <div class="patient-avatar" id="patientAvatar">RC</div>
+            <div class="patient-info">
+              <div class="patient-name-row">
+                <span class="patient-name" id="patName">Robert Chen</span>
+                <span class="patient-id-tag" id="patIdTag">ID: P002</span>
+                <span class="verification-badge verified" id="verifBadge">Verified via Phone</span>
+              </div>
+              <div class="patient-meta" id="patMeta">
+                <span>Primary: <strong>Dr. James Okafor</strong></span>
+                <span>•</span>
+                <span>Last Visit: <strong>2026-09-15</strong></span>
+                <span>•</span>
+                <span>Language: <strong>English</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Navigation -->
+          <div class="telemetry-tabs">
+            <button class="t-tab active" onclick="switchTab('triage', this)">Clinical Decisions & Reply</button>
+            <button class="t-tab" onclick="switchTab('audit', this)">Policy Trace & Verification</button>
+            <button class="t-tab" onclick="switchTab('json', this)">Structured Output Schema</button>
+          </div>
+
+          <!-- Tab 1: Clinical Decisions & Reply -->
+          <div id="tabTriage" class="tab-pane active">
+            <div class="decision-grid">
+              <div class="decision-card">
+                <span class="dec-label">Identified Intents</span>
+                <div class="tag-list" id="tagIntents"></div>
+              </div>
+              <div class="decision-card">
+                <span class="dec-label">Assigned Routing Queues</span>
+                <div class="tag-list" id="tagQueues"></div>
+              </div>
+            </div>
+
+            <div class="decision-card full-width">
+              <span class="dec-label">Authorized Clinical Actions</span>
+              <div class="tag-list" id="tagActions"></div>
+            </div>
+
+            <div class="decision-card full-width">
+              <span class="dec-label">MCP Tools Invoked Sequence</span>
+              <div class="tools-chain" id="toolChain"></div>
+            </div>
+
+            <div class="reply-container">
+              <div class="reply-header">
+                <div class="reply-title">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  <span>Drafted Patient Communication</span>
+                </div>
+                <button class="copy-btn" onclick="copyReplyText()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  <span id="copyBtnText">Copy Reply</span>
+                </button>
+              </div>
+              <div class="reply-content" id="replyBody"></div>
+            </div>
+          </div>
+
+          <!-- Tab 2: Policy Trace & Verification -->
+          <div id="tabAudit" class="tab-pane">
+            <div class="audit-list" id="auditList">
+              <!-- Dynamically populated audit checks -->
+            </div>
+          </div>
+
+          <!-- Tab 3: Structured Output Schema -->
+          <div id="tabJson" class="tab-pane">
+            <div class="json-header">
+              <span>Zod-Validated Standard Agent Output:</span>
+              <button class="copy-btn" onclick="copyJsonText()">Copy JSON</button>
+            </div>
+            <pre class="json-code" id="rawJsonCode"></pre>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
